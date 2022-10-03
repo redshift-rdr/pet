@@ -49,4 +49,38 @@ def get_one(model, uuid):
 
 @app.route('/api/<model>/add', methods=['POST'])
 def add(model):
-    pass
+    model = get_model(model)
+    data = request.get_json()
+
+    try:
+        model_instance = model(**data)
+    except Exception as e:
+        return jsonify({'error': f'{e}'})
+
+    db.session.add(model_instance)
+    db.session.commit()
+
+    return jsonify(model_instance.as_dict())    
+
+@app.route('/api/<model>/<uuid>/update', methods=['POST'])
+def update(model, uuid):
+    model = get_model(model)
+    data = request.get_json()
+
+    model_instance = db.session.query(model).filter_by(uuid=uuid).first()
+    if not model_instance:
+        return jsonify({"error": "could not find a model with that uuid"})
+
+    try:
+        for k,v in data.items():
+            if hasattr(model_instance, k):
+                setattr(model_instance, k, v)
+
+        db.session.add(model_instance)
+        db.session.commit()    
+    except Exception as e:
+        return jsonify({"error" : f"{e}"})
+
+    return jsonify(model_instance.as_dict())
+
+    
