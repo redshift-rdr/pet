@@ -18,11 +18,13 @@ def get_model(model_name : str):
     except KeyError:
         return None
 
+## Web GUI routes
 @app.route('/')
 @app.route('/index')
 def index():
-    #return render_template('index.html')
-    return 'working'
+    engagements = db.session.query(Engagement).all()
+
+    return render_template('index.html', engagements=engagements)
 
 
 ## API routes
@@ -47,6 +49,7 @@ def get_one(model, uuid):
 
     return jsonify(item.as_dict())
 
+# add an new instance of a model
 @app.route('/api/<model>/add', methods=['POST'])
 def add(model):
     model = get_model(model)
@@ -62,6 +65,7 @@ def add(model):
 
     return jsonify(model_instance.as_dict())    
 
+# update an instance of a model
 @app.route('/api/<model>/<uuid>/update', methods=['POST'])
 def update(model, uuid):
     model = get_model(model)
@@ -83,4 +87,34 @@ def update(model, uuid):
 
     return jsonify(model_instance.as_dict())
 
-    
+# delete an instance of a model
+@app.route('/api/<model>/<uuid>/remove', methods=['POST'])
+def remove(model, uuid):
+    model = get_model(model)
+    data = request.get_json()
+
+    try:
+        db.session.query(model).filter_by(uuid=uuid).delete()
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"error" : f"{e}"})
+
+    return jsonify({"status": "success", "message": "model deleted successfully"})
+
+# create a relationship between models
+@app.route('/api/<model>/<uuid>/link', methods=['POST'])
+def link(model, uuid):
+    model = get_model(model)
+    data = request.get_json()
+
+    link_model = get_model(data["model"])
+
+    to_link = db.session.query(link_model).filter_by(uuid=data["uuid"]).first()
+    model_instance = db.session.query(model).filter_by(uuid=uuid).first()
+
+    setattr(model_instance, data["linked_attribute"], to_link)
+
+    db.session.add_all([to_link, model_instance])
+    db.session.commit()
+
+    return jsonify(model_instance.as_dict())

@@ -11,31 +11,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
     
     {% if title %}
-            <title>{{ title }} - rynance</title>
+            <title>{{ title }} - pentest engagement tracker</title>
     {% else %}
-        <title>rynance</title>
+        <title>pentest engagement tracker</title>
     {% endif %}
   </head>
   <body>
     <div class="container">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-danger mb-2">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{{ url_for('index') }}">rynance</a>
+          <a class="navbar-brand" href="{{ url_for('index') }}">PET</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href=" {{ url_for('addrecord') }} "><i class="bi bi-plus-circle me-2"></i>Add Record </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href=" {{ url_for('recurring_records') }} "><i class="bi bi-arrow-repeat me-2"></i>Recurring Records</a>
-              </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <a class="nav-link" href=" {{ url_for('chooseprofile') }} "><i class="bi bi-person-circle"></i> </a>
+                <a class="nav-link" href=" "><i class="bi bi-plus-circle me-2"></i> Link </a>
               </li>
             </ul>
           </div>

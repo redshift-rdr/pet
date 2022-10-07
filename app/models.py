@@ -65,6 +65,23 @@ class Engagement(db.Model):
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+    def completed_count(self):
+        complete_count = 0
+        total = 0
+
+        for tasklist in self.tasklists:
+            data = tasklist.completed_count()
+
+            complete_count += data[0]
+            total += data[1]
+
+        return (complete_count, total)
+
+    def completed_percentage(self):
+        data = self.completed_count()
+
+        return data[0] / data[1] * 100
+
 class Tasklist(db.Model):
     uuid = db.Column(db.String(36), primary_key=True, default=generate_uuid)
     title = db.Column(db.String(128), index=True)
@@ -79,6 +96,9 @@ class Tasklist(db.Model):
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def completed_count(self):
+        return (sum([1 for task in self.tasks if task.complete]), len(self.tasks))
 
 class Task(db.Model):
     uuid = db.Column(db.String(36), primary_key=True, default=generate_uuid)
