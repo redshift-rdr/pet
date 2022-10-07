@@ -26,6 +26,10 @@ def index():
 
     return render_template('index.html', engagements=engagements)
 
+@app.route('/add_engagement', methods=['GET', 'POST'])
+def add_engagement():
+    # TODO: add web gui form and other stuff
+    pass
 
 ## API routes
 # get all instances in model
