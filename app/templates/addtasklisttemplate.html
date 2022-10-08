@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card mb-2">
+        <div class="card-body">
+            Engagement Template: {{ engagement_template.title}}
+
+            <div class="ms-2">
+            {% for tl in engagement_template.tasklist_templates %}
+                <span class="text-decoration-underline">{{ tl.title }}</span>
+                <ul style="list-style-type: none;">
+                {% for task in tl.task_templates %}
+                    <li>{{ task.title }}</li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h3>Add Tasklist Template</h3>
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="row mb-1">
+                    <div class="col-2">
+                        {{ form.title.label }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.title(size=36, class='form-control') }}
+                    </div>
+                </div>
+                
+                <p>{{ form.submit(class="btn btn-success") }}</p>
+            </form>
+        </div> 
+    </div>
+</div>
+
+{% endblock %}

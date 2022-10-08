@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="row mb-1">
+                    <div class="col-2">
+                        {{ form.title.label }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.title(size=36, class='form-control') }}
+                    </div>
+                </div>
+
+                <div class="row mb-1">
+                    <div class="col-2">
+                        {{ form.client.label }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.client(size=36, class='form-control') }}
+                    </div>
+                </div>
+                
+                <p>{{ form.submit(class="btn btn-success") }}</p>
+            </form>
+        </div> 
+    </div>
+</div>
+
+{% endblock %}

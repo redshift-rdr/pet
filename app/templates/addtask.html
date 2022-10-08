@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card mb-2">
+        <div class="card-body">
+            Engagement {{ tasklist.engagement.title}} - {{ tasklist.engagement.client }}
+
+            <div class="ms-2">
+            {% for tl in tasklist.engagement.tasklists %}
+                <span class="text-decoration-underline">{{ tl.title }}</span>
+                <ul style="list-style-type: none;">
+                {% for task in tl.tasks %}
+                    <li>{{ task.title }}</li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h3>Add Task</h3>
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="row mb-1">
+                    <div class="col-2">
+                        {{ form.title.label }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.title(size=36, class='form-control') }}
+                    </div>
+                </div>
+
+                <div class="row mb-1">
+                    <div class="col-2">
+                        {{ form.deadline.label }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.deadline(class='form-control') }}
+                    </div>
+                </div>
+
+                <div class="row mb-1">
+                    <div class="col-2">
+                        {{ form.notes.label }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.notes(class='form-control', rows=5, style="min-width: 100%") }}
+                    </div>
+                </div>
+                
+                <p>{{ form.submit(class="btn btn-success") }}</p>
+            </form>
+        </div> 
+    </div>
+</div>
+
+{% endblock %}

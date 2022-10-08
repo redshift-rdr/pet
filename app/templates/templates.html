@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for template in templates %}
+            <div class="col">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ template.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ template.client }}</h6>
+                        <div class="ms-2">
+                            {% for tl in template.tasklist_templates %}
+                                <span class="text-decoration-underline">{{ tl.title }}</span>
+                                <ul style="list-style-type: none;">
+                                    {% for task in tl.task_templates %}
+                                        <li>{{ task.title }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary" href="{{ url_for('add_tasklist_template', uuid=template.uuid) }}">Edit</a>
+                        <a class="btn btn-danger" href="{{ url_for('remove_template', uuid=template.uuid) }}">Delete</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>    
+</div>
+
+{% endblock %}

@@ -3,66 +3,70 @@
 {% block content %}
 
 <div class="container">
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.title.label }}
+    <div class="card">
+        <div class="card-body">
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.title.label }}
+                </div>
+                <div class="col-4">
+                    {{ form.title(size=36, class='form-control') }}
+                </div>
             </div>
-            <div class="col-4">
-                {{ form.title(size=36, class='form-control') }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.client.label }}
+                </div>
+                <div class="col-4">
+                    {{ form.client(size=36, class='form-control') }}
+                </div>
             </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.client.label }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.category.label }}
+                </div>
+                <div class="col-4">
+                    {{ form.category(size=36, class='form-control') }}
+                </div>
             </div>
-            <div class="col-4">
-                {{ form.client(size=36, class='form-control') }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.start.label }}
+                </div>
+                <div class="col-4">
+                    {{ form.start(class='form-control') }}
+                </div>
             </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.category.label }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.end.label }}
+                </div>
+                <div class="col-4">
+                    {{ form.end(class='form-control') }}
+                </div>
             </div>
-            <div class="col-4">
-                {{ form.category(size=36, class='form-control') }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.engagement_template.label }}
+                </div>
+                <div class="col-4">
+                    {{ form.engagement_template(class='form-control') }}
+                </div>
             </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.start.label }}
+            <div class="row mb-1">
+                <div class="col-2">
+                    {{ form.notes.label }}
+                </div>
+                <div class="col-8">
+                    {{ form.notes(class='form-control', rows=5, style="min-width: 100%") }}
+                </div>
             </div>
-            <div class="col-4">
-                {{ form.start(class='form-control') }}
-            </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.end.label }}
-            </div>
-            <div class="col-4">
-                {{ form.end(class='form-control') }}
-            </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.engagement_template.label }}
-            </div>
-            <div class="col-4">
-                {{ form.engagement_template(class='form-control') }}
-            </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-2">
-                {{ form.notes.label }}
-            </div>
-            <div class="col-8">
-                {{ form.notes(class='form-control', rows=5, style="min-width: 100%") }}
-            </div>
-        </div>
-        <p>{{ form.submit(class="btn btn-success") }}</p>
-    </form>
+            <p>{{ form.submit(class="btn btn-success") }}</p>
+        </form>
+    </div>
+    </div>
 </div>
 
 {% endblock %}
