@@ -1,7 +1,8 @@
 from flask import render_template, flash, redirect, request, url_for, session, make_response, jsonify
 from app import app, db
 from app.models import Engagement, Task, Tasklist, EngagementTemplate, TasklistTemplate, TaskTemplate
-from datetime import datetime, timedelta
+from app.forms import AddEngagementForm
+from datetime import date, datetime, timedelta
 
 def get_model(model_name : str):
     model_map = {
@@ -28,8 +29,30 @@ def index():
 
 @app.route('/add_engagement', methods=['GET', 'POST'])
 def add_engagement():
-    # TODO: add web gui form and other stuff
-    pass
+    form = AddEngagementForm()
+
+    if form.validate_on_submit():
+        template = db.session.query(EngagementTemplate).filter_by(uuid=form.engagement_template.data).first()
+
+        new_engagement = Engagement(title=form.title.data, client=form.client.data, category=form.category.data, start=form.start.data, end=form.end.data, notes=form.notes.data, template=template)
+        tasklist_templates = template.tasklist_templates
+        tasklists = []
+        for tasklist_template in tasklist_templates:
+            new_tasklist = Tasklist(title=tasklist_template.title)
+            tasks = []
+            for task_template in tasklist_template.task_templates:
+                new_task = Task(title=task_template.title, notes=task_template.notes, deadline=date.today()+timedelta(days=int(task_template.days_to_complete)))
+                tasks.append(new_task)
+                db.session.add(new_task)
+            new_tasklist.tasks = tasks
+            tasklists.append(new_tasklist)
+            db.session.add(new_tasklist)
+        new_engagement.tasklists = tasklists
+
+        db.session.add(new_engagement)
+        db.session.commit()
+
+    return render_template('addengagement.html', form=form)
 
 ## API routes
 # get all instances in model

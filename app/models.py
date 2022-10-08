@@ -1,5 +1,6 @@
 from app import db
 import uuid
+from datetime import date, timedelta
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -37,6 +38,7 @@ class TaskTemplate(db.Model):
     uuid = db.Column(db.String(36), primary_key=True, default=generate_uuid)
     title = db.Column(db.String(64), index=True, unique=True)
     notes = db.Column(db.Text)
+    days_to_complete = db.Column(db.Integer)
 
     tasklisttemplate_id = db.Column(db.String(36), db.ForeignKey('tasklist_template.uuid'))
     template = db.relationship('TasklistTemplate', back_populates='task_templates')
@@ -105,6 +107,7 @@ class Task(db.Model):
     title = db.Column(db.String(128), index=True)
     notes = db.Column(db.Text)
     complete = db.Column(db.Boolean, default=False)
+    deadline = db.Column(db.Date)
 
     tasklist_id = db.Column(db.String(36), db.ForeignKey('tasklist.uuid'))
     tasklist = db.relationship('Tasklist', back_populates='tasks')
@@ -114,3 +117,6 @@ class Task(db.Model):
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def is_overdue(self):
+        return date.today() >= self.deadline

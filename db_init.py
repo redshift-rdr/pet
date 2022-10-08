@@ -8,9 +8,9 @@ tasklist_template = TasklistTemplate(title='Test tasklist template', task_templa
 engagement_template = EngagementTemplate(client='Context', title='test engagement template', tasklist_templates=[tasklist_template])
 
 
-task = Task(title='test task', notes='just a test', complete=False)
+task = Task(title='test task', notes='just a test', complete=False, deadline=datetime.now()+timedelta(days=5))
 tasklist = Tasklist(title='test tasklist', tasks=[task])
-test_engagement = Engagement(client='Context', title='Test web app', start=datetime.now(), end=datetime.now(), notes='test', template=engagement_template, tasklists=[tasklist])
+test_engagement = Engagement(client='Context', title='Test web app', start=datetime.now(), end=datetime.now()+timedelta(days=7), notes='test', template=engagement_template, tasklists=[tasklist])
 
 print('[+] Adding test data to the database')
 
