@@ -14,7 +14,7 @@ class AddEngagementForm(FlaskForm):
     engagement_template = SelectField('Template')
     submit = SubmitField('Add')
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super(AddEngagementForm, self).__init__()
         self.engagement_template.choices = [(et.uuid, et.title) for et in EngagementTemplate.query.all()]
 

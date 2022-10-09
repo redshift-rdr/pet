@@ -77,6 +77,18 @@ def add_engagement():
 
     return render_template('addengagement.html', form=form)
 
+@app.route('/edit_engagement/<uuid>', methods=['GET', 'POST'])
+def edit_engagement(uuid):
+    engagement = db.session.query(Engagement).filter_by(uuid=uuid).first()
+
+    if not uuid or not engagement:
+        flash("No UUID provided, or invalid UUID")
+        return redirect(url_for('index'))
+    
+    form = AddEngagementForm(request.form, obj=engagement)
+
+    return render_template('editengagement.html', form=form, engagement=engagement)
+
 @app.route('/add_tasklist', methods=['GET', 'POST'])
 def add_tasklist():
     uuid = request.args.get('uuid')
@@ -245,7 +257,10 @@ def update(model, uuid):
     try:
         for k,v in data.items():
             if hasattr(model_instance, k):
-                setattr(model_instance, k, v)
+                if k in ['start', 'end', 'deadline']:
+                    setattr(model_instance, k, date.fromisoformat(v))
+                else:
+                    setattr(model_instance, k, v)
 
         db.session.add(model_instance)
         db.session.commit()    
