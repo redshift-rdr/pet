@@ -11,7 +11,7 @@
                         {% set complete_perc = engagement.completed_percentage() %}
                         <div class="progress-bar bg-danger" role="progressbar" style="width: {{ complete_perc }}%" aria-valuenow="{{ complete_perc }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1 align-items-center">
                         <div class="col-2">
                             <h5 class="card-title">Title:</h5>
                         </div>
@@ -20,7 +20,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-1 align-items-center">
                         <div class="col-2">
                             <h6 class="card-subtitle text-muted">Client:</h6>
                         </div>
@@ -29,7 +29,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-1 align-items-center">
                         <div class="col-2">
                             <h6 class="card-subtitle text-muted">Start:</h6>
                         </div>
@@ -38,7 +38,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-1 align-items-center">
                         <div class="col-2">
                             <h6 class="card-subtitle text-muted">End:</h6>
                         </div>
@@ -47,7 +47,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-1 align-items-center">
                         <div class="col-2">
                             <h6 class="card-subtitle text-muted">Notes:</h6>
                         </div>
@@ -60,23 +60,69 @@
                     
                     <hr>
 
+                    <div id="tasklist_container" class="ms-4">
+                    <h5 class="text-decoration-underline mb-3">Tasklists</h5>
                     {% for tasklist in engagement.tasklists %}
-                        <h6 class="text-decoration-underline card-subtitle mb-2">{{ tasklist.title }}</h6>
-
-                        <div id="task-container" class="ms-3 mb-2">
-                            {% for task in tasklist.tasks %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" onclick="toggle_task(this)" data-uuid="{{ task.uuid }}" value="" id="task-id-{{ task.uuid }}" {% if task.complete %}checked{% endif %}>
-                                    <label class="form-check-label {% if not task.complete and task.is_overdue() %}text-danger{% endif %}" for="task-id-{{ task.uuid }}">
-                                        <span class="text-muted">{{ task.deadline.strftime('%-d/%-m') }}</span> - {{ task.title }}
-                                    </label>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <div class="row mb-1 align-items-center">
+                                    <div class="col-2">
+                                        <h6 class="card-subtitle text-muted">Tasklist title:</h6>
+                                    </div>
+                                    <div class="col">
+                                        <input class="form-control" type="text" value="{{ tasklist.title }}" data-uuid="{{ tasklist.uuid }}" onblur="edit_engagement(this, 'Tasklist', 'title')">
+                                    </div>
                                 </div>
-                            {% endfor %}
-                            <a class="text-success" href="{{ url_for('add_task', uuid=tasklist.uuid) }}">Add task</a>
-                        </div>
+                                <div class="row mb-1 align-items-center">
+                                    <div class="col-2">
+                                        <h6 class="card-subtitle text-muted">Tasklist notes:</h6>
+                                    </div>
+                                    <div class="col">
+                                        <input class="form-control" type="text" value="{{ tasklist.notes }}" data-uuid="{{ tasklist.uuid }}" onblur="edit_engagement(this, 'Tasklist', 'notes')">
+                                    </div>
+                                </div>
 
+                                <div id="task-container" class="ms-4 mb-2">
+                                <h5 class="text-decoration-underline mb-3">Tasks</h5>
+                                    {% for task in tasklist.tasks %}
+                                        <div class="card bg-warning">
+                                            <div class="card-body">
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Task title:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control" type="text" value="{{ task.title }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'Task', 'title')">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Task notes:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control" type="text" value="{{ task.notes }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'Task', 'notes')">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Task deadline:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control" type="date" value="{{ task.deadline }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'Task', 'deadline')">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    {% endfor %}
+                                    <a class="text-danger" href="{{ url_for('add_task', uuid=tasklist.uuid) }}">Add task</a>
+                                </div>
+                            </div>
+                        </div>
+                    <hr>
                     {% endfor %}
-                    <a class="text-success" href="{{ url_for('add_tasklist', uuid=engagement.uuid) }}">Add tasklist</a>
+                    </div>
+                    <a class="text-danger" href="{{ url_for('add_tasklist', uuid=engagement.uuid) }}">Add tasklist</a>
 
                 </div>
                 <div class="card-footer">

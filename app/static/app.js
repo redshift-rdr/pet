@@ -1,3 +1,5 @@
+
+
 /* sends a http request to toggle a task's completion status
  *
  * the request should be sent when the checkbox is changed
@@ -76,20 +78,43 @@ function edit_engagement(input, model, attribute)
     var eng_uuid = input.dataset.uuid;
 
     // construct the http request
-    var url = "/api/Engagement/" + eng_uuid + "/update";
+    var url = "/api/" + model + "/" + eng_uuid + "/update";
     var http = new XMLHttpRequest();
     http.onreadystatechange = function()
     {
         // if the request finishes and is successful
         if (http.readyState == 4 && http.status == 200)
         {
-            console.log(http.responseText);
-            location.reload();
+            // console.log(http.responseText);
+            input.classList.add('inputbgsuccess');
+
+            setTimeout( function(){
+                input.classList.add('inputbgfade');
+                input.classList.remove('inputbgsuccess');
+                
+            }, 1000);
+            //location.reload();
+
+            setTimeout( function() {
+                input.classList.remove('inputbgfade');
+            }, 1500);
         }
         else if (http.readyState == 4 && http.status != 200)
         {
             // log the error
             console.log(http.responseText);
+            input.classList.add('inputbgfail');
+
+            setTimeout( function(){
+                input.classList.add('inputbgfade');
+                input.classList.remove('inputbgfail');
+                
+            }, 1000);
+            //location.reload();
+
+            setTimeout( function() {
+                input.classList.remove('inputbgfade');
+            }, 1500);
         }
     };
 

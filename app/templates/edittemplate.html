@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1 align-items-center">
+                        <div class="col-2">
+                            <h5 class="card-title">Title:</h5>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" type="text" value="{{ template.title }}" data-uuid="{{ template.uuid }}" onblur="edit_engagement(this, 'EngagementTemplate', 'title')">
+                        </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center">
+                        <div class="col-2">
+                            <h6 class="card-subtitle text-muted">Client:</h6>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" type="text" value="{{ template.client }}" data-uuid="{{ template.uuid }}" onblur="edit_engagement(this, 'EngagementTemplate', 'client')">
+                        </div>
+                    </div>
+                    
+                    <hr>
+
+                    <div id="tasklist_container" class="ms-4">
+                    <h5 class="text-decoration-underline mb-3">Tasklists</h5>
+                    {% for tasklist in template.tasklist_templates %}
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <div class="row mb-1 align-items-center">
+                                    <div class="col-2">
+                                        <h6 class="card-subtitle text-muted">Tasklist title:</h6>
+                                    </div>
+                                    <div class="col">
+                                        <input class="form-control" type="text" value="{{ tasklist.title }}" data-uuid="{{ tasklist.uuid }}" onblur="edit_engagement(this, 'TasklistTemplate', 'title')">
+                                    </div>
+                                </div>
+
+                                <div id="task-container" class="ms-4 mb-2">
+                                <h5 class="text-decoration-underline mb-3">Tasks</h5>
+                                    {% for task in tasklist.task_templates %}
+                                        <div class="card bg-warning">
+                                            <div class="card-body">
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Title:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control" type="text" value="{{ task.title }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'TaskTemplate', 'title')">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Notes:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control" type="text" value="{{ task.notes }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'TaskTemplate', 'notes')">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Days to complete:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control" type="number" value="{{ task.days_to_complete }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'TaskTemplate', 'days_to_complete')">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    {% endfor %}
+                                    <a class="text-success" href="{{ url_for('add_task_template', uuid=tasklist.uuid) }}">Add task template</a>
+                                </div>
+                            </div>
+                        </div>
+                    <hr>
+                    {% endfor %}
+                    <a class="btn btn-primary" href="{{ url_for('add_tasklist_template', uuid=template.uuid) }}">Add tasklist</a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

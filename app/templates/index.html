@@ -20,21 +20,24 @@
                     
                     <hr>
 
-                    {% for tasklist in engagement.tasklists %}
-                        <h6 class="text-decoration-underline card-subtitle mb-2">{{ tasklist.title }}</h6>
+                    
+                        {% for tasklist in engagement.tasklists %}
+                        <div id="tasklist_container" class="mb-2">
+                            <h6 class="text-decoration-underline card-subtitle mb-2">{{ tasklist.title }}</h6>
 
-                        <div id="task-container" class="ms-3">
-                            {% for task in tasklist.tasks %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" onclick="toggle_task(this)" data-uuid="{{ task.uuid }}" value="" id="task-id-{{ task.uuid }}" {% if task.complete %}checked{% endif %}>
-                                    <label class="form-check-label {% if not task.complete and task.is_overdue() %}text-danger{% endif %}" for="task-id-{{ task.uuid }}">
-                                        <span class="text-muted">{{ task.deadline.strftime('%-d/%-m') }}</span> - {{ task.title }}
-                                    </label>
+                            <div id="task-container" class="ms-3">
+                                {% for task in tasklist.tasks %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" onclick="toggle_task(this)" data-uuid="{{ task.uuid }}" value="" id="task-id-{{ task.uuid }}" {% if task.complete %}checked{% endif %}>
+                                        <label class="form-check-label {% if not task.complete and task.is_overdue() %}text-danger{% endif %}" for="task-id-{{ task.uuid }}">
+                                            <span class="text-muted">{{ task.deadline.strftime('%-d %b') }}</span> - {{ task.title }}
+                                        </label>
+                                </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
                         </div>
-
-                    {% endfor %}
+                        {% endfor %}
+                    
 
                 </div>
             </div>

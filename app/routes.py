@@ -64,7 +64,7 @@ def add_engagement():
             new_tasklist = Tasklist(title=tasklist_template.title)
             tasks = []
             for task_template in tasklist_template.task_templates:
-                new_task = Task(title=task_template.title, notes=task_template.notes, deadline=date.today()+timedelta(days=int(task_template.days_to_complete)))
+                new_task = Task(title=task_template.title, notes=task_template.notes, deadline=new_engagement.start+timedelta(days=int(task_template.days_to_complete)))
                 tasks.append(new_task)
                 db.session.add(new_task)
             new_tasklist.tasks = tasks
@@ -74,6 +74,7 @@ def add_engagement():
 
         db.session.add(new_engagement)
         db.session.commit()
+        return redirect(url_for('index'))
 
     return render_template('addengagement.html', form=form)
 
@@ -84,10 +85,18 @@ def edit_engagement(uuid):
     if not uuid or not engagement:
         flash("No UUID provided, or invalid UUID")
         return redirect(url_for('index'))
-    
-    form = AddEngagementForm(request.form, obj=engagement)
 
-    return render_template('editengagement.html', form=form, engagement=engagement)
+    return render_template('editengagement.html', engagement=engagement)
+
+@app.route('/edit_template/<uuid>', methods=['GET', 'POST'])
+def edit_template(uuid):
+    template = db.session.query(EngagementTemplate).filter_by(uuid=uuid).first()
+
+    if not uuid or not template:
+        flash("No UUID provided, or invalid UUID")
+        return redirect(url_for('index'))
+
+    return render_template('edittemplate.html', template=template)
 
 @app.route('/add_tasklist', methods=['GET', 'POST'])
 def add_tasklist():
@@ -252,11 +261,12 @@ def update(model, uuid):
 
     model_instance = db.session.query(model).filter_by(uuid=uuid).first()
     if not model_instance:
-        return jsonify({"error": "could not find a model with that uuid"})
+        return jsonify({"error": "could not find a model with that uuid"}),400
 
     try:
         for k,v in data.items():
             if hasattr(model_instance, k):
+                # hack for date fields
                 if k in ['start', 'end', 'deadline']:
                     setattr(model_instance, k, date.fromisoformat(v))
                 else:
@@ -265,7 +275,7 @@ def update(model, uuid):
         db.session.add(model_instance)
         db.session.commit()    
     except Exception as e:
-        return jsonify({"error" : f"{e}"})
+        return jsonify({"error" : f"{e}"}),400
 
     return jsonify(model_instance.as_dict())
 
@@ -279,7 +289,7 @@ def remove(model, uuid):
         db.session.query(model).filter_by(uuid=uuid).delete()
         db.session.commit()
     except Exception as e:
-        return jsonify({"error" : f"{e}"})
+        return jsonify({"error" : f"{e}"}), 400
 
     return jsonify({"status": "success", "message": "model deleted successfully"})
 
