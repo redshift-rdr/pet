@@ -39,6 +39,7 @@ class TaskTemplate(db.Model):
     title = db.Column(db.String(64), index=True, unique=True)
     notes = db.Column(db.Text)
     days_to_complete = db.Column(db.Integer)
+    offset = db.Column(db.String(10))
 
     tasklisttemplate_id = db.Column(db.String(36), db.ForeignKey('tasklist_template.uuid'))
     template = db.relationship('TasklistTemplate', back_populates='task_templates')

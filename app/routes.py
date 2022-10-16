@@ -3,7 +3,9 @@ from app import app, db
 from app.models import Engagement, Task, Tasklist, EngagementTemplate, TasklistTemplate, TaskTemplate
 from app.forms import AddEngagementForm, AddEngagementTemplateForm, AddTaskForm, AddTaskTemplateForm, AddTasklistForm, AddTasklistTemplateForm
 from datetime import date, datetime, timedelta
+from math import copysign
 
+## utility functions
 def get_model(model_name : str):
     model_map = {
         'Engagement': Engagement, 
@@ -18,6 +20,21 @@ def get_model(model_name : str):
         return model_map[model_name]
     except KeyError:
         return None
+    
+def add_work_days(start_date : date, days_to_add : int):
+    """
+        copied from: https://absolutecodeworks.com/python-add-days-excluding-weekends
+    """
+    direction = copysign(1, days_to_add)
+    workingDayCount = 0    
+    while workingDayCount < abs(days_to_add):
+        start_date += timedelta(days=direction)
+        weekday = int(start_date.strftime('%w'))
+        if (weekday != 0 and weekday != 6):
+            workingDayCount += 1
+    
+    print(start_date)
+    return start_date
 
 ## Web GUI routes
 @app.route('/')
@@ -64,7 +81,10 @@ def add_engagement():
             new_tasklist = Tasklist(title=tasklist_template.title)
             tasks = []
             for task_template in tasklist_template.task_templates:
-                new_task = Task(title=task_template.title, notes=task_template.notes, deadline=new_engagement.start+timedelta(days=int(task_template.days_to_complete)))
+                offset_point = new_engagement.start
+                if task_template.offset == 'end':
+                    offset_point = new_engagement.end
+                new_task = Task(title=task_template.title, notes=task_template.notes, deadline=add_work_days(offset_point,task_template.days_to_complete))
                 tasks.append(new_task)
                 db.session.add(new_task)
             new_tasklist.tasks = tasks
@@ -77,6 +97,24 @@ def add_engagement():
         return redirect(url_for('index'))
 
     return render_template('addengagement.html', form=form)
+
+@app.route('/remove_engagement/<uuid>')
+def remove_engagement(uuid):
+    engagement = db.session.query(Engagement).filter_by(uuid=uuid).first()
+
+    if not uuid or not engagement:
+        flash("No UUID provided, or invalid UUID")
+        return redirect(url_for('index'))
+    
+    for tasklist in engagement.tasklists:
+        for task in tasklist.tasks:
+            db.session.query(Task).filter_by(uuid=task.uuid).delete()
+        db.session.query(Tasklist).filter_by(uuid=tasklist.uuid).delete()
+    db.session.query(Engagement).filter_by(uuid=uuid).delete()
+
+    db.session.commit()
+    flash('Engagement removed successfully')
+    return redirect(url_for('index'))
 
 @app.route('/edit_engagement/<uuid>', methods=['GET', 'POST'])
 def edit_engagement(uuid):

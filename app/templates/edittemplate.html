@@ -70,6 +70,17 @@
                                                         <input class="form-control" type="number" value="{{ task.days_to_complete }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'TaskTemplate', 'days_to_complete')">
                                                     </div>
                                                 </div>
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        <h6 class="card-subtitle text-muted">Offset:</h6>
+                                                    </div>
+                                                    <div class="col">
+                                                        <select class="form-select" data-uuid="{{ task.uuid }}" onchange="edit_engagement(this, 'TaskTemplate', 'offset')">
+                                                            <option value="start" {% if task.offset == 'start'%}selected{% endif %}>Start date</option>
+                                                            <option value="end" {% if task.offset == 'end'%}selected{% endif %}>End date</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <hr>
