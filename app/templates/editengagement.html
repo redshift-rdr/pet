@@ -6,6 +6,14 @@
     <div class="row justify-content-md-center">
         <div class="col-8">
             <div class="card">
+                <div class="card-header">
+                    {% if engagement.category == "archived" %}
+                        <a class="btn btn-success" data-uuid="{{ engagement.uuid }}" onclick="archive_engagement(this, '')">Un-archive</a>
+                    {% else %}
+                        <a class="btn btn-warning" data-uuid="{{ engagement.uuid }}" onclick="archive_engagement(this)">Archive</a>
+                    {% endif %}
+                    <a class="btn btn-danger" href="{{ url_for('remove_engagement', uuid=engagement.uuid) }}">Remove</a>
+                </div>
                 <div class="card-body">
                     <div class="progress mb-2" style="height: 5px">
                         {% set complete_perc = engagement.completed_percentage() %}
@@ -85,11 +93,11 @@
                                 <div id="task-container" class="ms-4 mb-2">
                                 <h5 class="text-decoration-underline mb-3">Tasks</h5>
                                     {% for task in tasklist.tasks %}
-                                        <div class="card bg-warning">
+                                        <div class="card bg-dark text-muted">
                                             <div class="card-body">
                                                 <div class="row mb-1 align-items-center">
                                                     <div class="col-2">
-                                                        <h6 class="card-subtitle text-muted">Task title:</h6>
+                                                        <h6 class="card-subtitle">Title</h6>
                                                     </div>
                                                     <div class="col">
                                                         <input class="form-control" type="text" value="{{ task.title }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'Task', 'title')">
@@ -97,7 +105,7 @@
                                                 </div>
                                                 <div class="row mb-1 align-items-center">
                                                     <div class="col-2">
-                                                        <h6 class="card-subtitle text-muted">Task notes:</h6>
+                                                        <h6 class="card-subtitle">Notes</h6>
                                                     </div>
                                                     <div class="col">
                                                         <input class="form-control" type="text" value="{{ task.notes }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'Task', 'notes')">
@@ -105,24 +113,115 @@
                                                 </div>
                                                 <div class="row mb-1 align-items-center">
                                                     <div class="col-2">
-                                                        <h6 class="card-subtitle text-muted">Task deadline:</h6>
+                                                        <h6 class="card-subtitle">Deadline</h6>
                                                     </div>
                                                     <div class="col">
                                                         <input class="form-control" type="date" value="{{ task.deadline }}" data-uuid="{{ task.uuid }}" onblur="edit_engagement(this, 'Task', 'deadline')">
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="text-center">
+                                                <a class="text-muted arrow-toggle collapsed" data-bs-toggle="collapse" href="#footer-collapse-{{ task.uuid }}" aria-expanded="false" aria-controls="footer-collapse-{{ task.uuid }}">
+                                                    <i class="bi bi-chevron-compact-down" aria-hidden="true"></i>
+                                                    <i class="bi bi-chevron-compact-up" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                            <div id="footer-collapse-{{ task.uuid }}" class="collapse">
+                                                <div class="card-footer text-center">
+                                                    <button class="btn btn-danger" data-uuid="{{ task.uuid }}" onclick="remove_model(this, 'Task')"><i class="bi bi-x-square"></i> Remove task</button>
+                                                </div>
+                                            </div>
                                         </div>
                                         <hr>
                                     {% endfor %}
-                                    <a class="text-danger" href="{{ url_for('add_task', uuid=tasklist.uuid) }}">Add task</a>
+                                    <a class="text-danger" data-bs-toggle="collapse" href="#add_task_form_collapse_{{ tasklist.uuid }}" aria-expanded="false" aria-controls="add_task_form_collapse_{{ tasklist.uuid }}">Add task</a>
+                                    <div class="collapse" id="add_task_form_collapse_{{ tasklist.uuid }}">
+                                        <div class="card card-body mt-2 bg-dark text-muted">
+                                            <form action="{{ url_for('add_task', uuid=tasklist.uuid) }}" method="post" novalidate>
+                                                {{ add_task_form.hidden_tag() }}
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        {{ add_task_form.title.label }}
+                                                    </div>
+                                                    <div class="col">
+                                                        {{ add_task_form.title(size=36, class_='form-control', autocomplete="off") }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        {{ add_task_form.notes.label }}
+                                                    </div>
+                                                    <div class="col">
+                                                        {{ add_task_form.notes(class_='form-control', rows=1, style="min-width: 100%") }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-2">
+                                                        {{ add_task_form.deadline.label() }}
+                                                    </div>
+                                                    <div class="col">
+                                                        {{ add_task_form.deadline(class_='form-control') }}
+                                                    </div>
+                                                </div>
+                                                <div class="d-grid gap-2 mt-2">
+                                                    {{ add_task_form.submit(class="btn btn-success btn-lg bg-gradient") }}
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <a class="text-muted arrow-toggle collapsed" data-bs-toggle="collapse" href="#footer-collapse-{{ tasklist.uuid }}" aria-expanded="false" aria-controls="footer-collapse-{{ tasklist.uuid }}">
+                                    <i class="bi bi-chevron-compact-down" aria-hidden="true"></i>
+                                    <i class="bi bi-chevron-compact-up" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                            <div id="footer-collapse-{{ tasklist.uuid }}" class="collapse">
+                                <div class="card-footer text-center">
+                                    <button class="btn btn-danger" data-uuid="{{ tasklist.uuid }}" onclick="remove_model(this, 'Tasklist')"><i class="bi bi-x-square"></i> Remove tasklist</button>
                                 </div>
                             </div>
                         </div>
                     <hr>
+
+                    
+
                     {% endfor %}
                     </div>
-                    <a class="text-danger" href="{{ url_for('add_tasklist', uuid=engagement.uuid) }}">Add tasklist</a>
+                    <a class="text-danger" data-bs-toggle="collapse" href="#add_tasklist_form_collapse" aria-expanded="false" aria-controls="add_tasklist_form_collapse">Add tasklist</a>
+                    <div class="collapse" id="add_tasklist_form_collapse">
+                        <div class="card card-body mt-2 bg-dark text-muted">
+                            <form action="{{ url_for('add_tasklist', uuid=engagement.uuid) }}" method="post" novalidate>
+                                {{ add_tasklist_form.hidden_tag() }}
+                                <div class="row mb-1 align-items-center">
+                                    <div class="col-2">
+                                        {{ add_tasklist_form.title.label }}
+                                    </div>
+                                    <div class="col">
+                                        {{ add_tasklist_form.title(size=36, class_='form-control', autocomplete="off") }}
+                                    </div>
+                                </div>
+
+                                <div class="row mb-1 align-items-center">
+                                    <div class="col-2">
+                                        {{ add_tasklist_form.notes.label }}
+                                    </div>
+                                    <div class="col">
+                                        {{ add_tasklist_form.notes(size=36, class_='form-control') }}
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 mt-2">
+                                    {{ add_tasklist_form.submit(class="btn btn-success btn-lg bg-gradient") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    
 
                 </div>
                 <div class="card-footer">
@@ -131,6 +230,7 @@
                     {% else %}
                         <a class="btn btn-warning" data-uuid="{{ engagement.uuid }}" onclick="archive_engagement(this)">Archive</a>
                     {% endif %}
+                    <a class="btn btn-danger" href="{{ url_for('remove_engagement', uuid=engagement.uuid) }}">Remove</a>
                 </div>
             </div>
         </div>

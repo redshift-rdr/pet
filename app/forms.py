@@ -20,6 +20,7 @@ class AddEngagementForm(FlaskForm):
 
 class AddTasklistForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
+    notes = TextAreaField('Notes')
     submit = SubmitField('Add')
 
 class AddTaskForm(FlaskForm):
@@ -40,6 +41,6 @@ class AddTasklistTemplateForm(FlaskForm):
 class AddTaskTemplateForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     notes = TextAreaField('Notes')
-    days_to_complete = IntegerField('Days to complete')
-    deadline_offset = SelectField('Deadline offset', choices=[('start', 'Start date'), ('end', 'End date')])
+    days_to_complete = IntegerField('Offset days')
+    deadline_offset = SelectField('Offset point', choices=[('start', 'Start date'), ('end', 'End date')])
     submit = SubmitField('Add')

@@ -125,3 +125,33 @@ function edit_engagement(input, model, attribute)
     // send off the request
     http.send(JSON.stringify({ [attribute] : input.value }));
 }
+
+function remove_model(btn, model)
+{
+    // grab the task uuid from the checkbox data
+    var task_uuid = btn.dataset.uuid;
+
+    // construct the http request
+    var url = "/api/" + model + "/" + task_uuid + "/remove";
+    var http = new XMLHttpRequest();
+    http.onreadystatechange = function()
+    {
+        // if the request finishes and is successful
+        if (http.readyState == 4 && http.status == 200)
+        {
+            location.reload();
+        }
+        else if (http.readyState == 4 && http.status != 200)
+        {
+            // log the error
+            console.log(http.responseText);
+        }
+    };
+
+    // open the request, and set the data type to JSON
+    http.open("POST", url);
+    http.setRequestHeader("Content-Type", "application/json");
+
+    // send off the request
+    http.send(JSON.stringify({}));
+}

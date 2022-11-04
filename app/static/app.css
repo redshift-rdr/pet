@@ -10,3 +10,18 @@
     transition: .5s;
     background-color: white;
 }
+
+.arrow-toggle .bi-chevron-compact-up,
+.arrow-toggle.collapsed .bi-chevron-compact-down {
+    display: inline-block;
+}
+
+.arrow-toggle .bi-chevron-compact-up,
+.arrow-toggle.collapsed .bi-chevron-compact-down:hover {
+    color: gold;
+}
+
+.arrow-toggle.collapsed .bi-chevron-compact-up,
+.arrow-toggle .bi-chevron-compact-down {
+    display: none;
+}

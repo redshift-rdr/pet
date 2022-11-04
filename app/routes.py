@@ -4,6 +4,7 @@ from app.models import Engagement, Task, Tasklist, EngagementTemplate, TasklistT
 from app.forms import AddEngagementForm, AddEngagementTemplateForm, AddTaskForm, AddTaskTemplateForm, AddTasklistForm, AddTasklistTemplateForm
 from datetime import date, datetime, timedelta
 from math import copysign
+from sqlalchemy import desc
 
 ## utility functions
 def get_model(model_name : str):
@@ -118,25 +119,29 @@ def remove_engagement(uuid):
 
 @app.route('/edit_engagement/<uuid>', methods=['GET', 'POST'])
 def edit_engagement(uuid):
+    add_task_form = AddTaskForm()
+    add_tasklist_form = AddTasklistForm()
     engagement = db.session.query(Engagement).filter_by(uuid=uuid).first()
 
     if not uuid or not engagement:
         flash("No UUID provided, or invalid UUID")
         return redirect(url_for('index'))
 
-    return render_template('editengagement.html', engagement=engagement)
+    return render_template('editengagement.html', add_task_form=add_task_form, add_tasklist_form=add_tasklist_form, engagement=engagement)
 
 @app.route('/edit_template/<uuid>', methods=['GET', 'POST'])
 def edit_template(uuid):
+    add_task_form = AddTaskTemplateForm()
+    add_tasklist_form = AddTasklistTemplateForm()
     template = db.session.query(EngagementTemplate).filter_by(uuid=uuid).first()
 
     if not uuid or not template:
         flash("No UUID provided, or invalid UUID")
         return redirect(url_for('index'))
 
-    return render_template('edittemplate.html', template=template)
+    return render_template('edittemplate.html', add_task_form=add_task_form, add_tasklist_form=add_tasklist_form, template=template)
 
-@app.route('/add_tasklist', methods=['GET', 'POST'])
+@app.route('/add_tasklist', methods=['POST'])
 def add_tasklist():
     uuid = request.args.get('uuid')
     engagement = db.session.query(Engagement).filter_by(uuid=uuid).first()
@@ -154,11 +159,11 @@ def add_tasklist():
         db.session.commit()
 
         flash(f'Successfully added new tasklist to engagement {engagement.title}')
-        return redirect(url_for('engagement', uuid=engagement.uuid))
+        
+    return redirect(url_for('edit_engagement', uuid=engagement.uuid))
 
-    return render_template('addtasklist.html', form=form, engagement=engagement)
 
-@app.route('/add_task', methods=['GET', 'POST'])
+@app.route('/add_task', methods=['POST'])
 def add_task():
     uuid = request.args.get('uuid')
     tasklist = db.session.query(Tasklist).filter_by(uuid=uuid).first()
@@ -175,9 +180,9 @@ def add_task():
         db.session.add(new_task)
         db.session.commit()
         flash(f'Successfully added new task to tasklist {tasklist.title} in engagement { tasklist.engagement.title}')
-        return redirect(url_for('engagement', uuid=tasklist.engagement.uuid))
         
-    return render_template('addtask.html', form=form, tasklist=tasklist)
+    return redirect(url_for('edit_engagement', uuid=tasklist.engagement.uuid))
+
 
 @app.route('/add_engagement_template', methods=['GET', 'POST'])
 def add_engagement_template():
@@ -193,7 +198,7 @@ def add_engagement_template():
 
     return render_template('addengagementtemplate.html', form=form)
 
-@app.route('/add_tasklist_template', methods=['GET', 'POST'])
+@app.route('/add_tasklist_template', methods=['POST'])
 def add_tasklist_template():
     uuid = request.args.get('uuid')
     engagement_template = db.session.query(EngagementTemplate).filter_by(uuid=uuid).first()
@@ -210,11 +215,10 @@ def add_tasklist_template():
         db.session.add(new_tasklist_template)
         db.session.commit()
 
-        return redirect(url_for('add_task_template', uuid=new_tasklist_template.uuid))
+    return redirect(url_for('edit_template', uuid=uuid))
+    #return render_template('addtasklisttemplate.html', form=form, engagement_template=engagement_template)
 
-    return render_template('addtasklisttemplate.html', form=form, engagement_template=engagement_template)
-
-@app.route('/add_task_template', methods=['GET', 'POST'])
+@app.route('/add_task_template', methods=['POST'])
 def add_task_template():
     uuid = request.args.get('uuid')
     tasklist_template = db.session.query(TasklistTemplate).filter_by(uuid=uuid).first()
@@ -232,7 +236,8 @@ def add_task_template():
 
         tasklist_template = db.session.query(TasklistTemplate).filter_by(uuid=uuid).first()
 
-    return render_template('addtasktemplate.html', form=form, tasklist_template=tasklist_template)
+    return redirect(url_for('edit_template', uuid=tasklist_template.template.uuid))
+    #return render_template('addtasktemplate.html', form=form, tasklist_template=tasklist_template)
 
 @app.route('/remove_template/<uuid>', methods=['GET'])
 def remove_template(uuid):

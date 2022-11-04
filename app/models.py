@@ -92,7 +92,7 @@ class Tasklist(db.Model):
 
     engagement_id = db.Column(db.String(36), db.ForeignKey('engagement.uuid'))
     engagement = db.relationship('Engagement', back_populates='tasklists')
-    tasks = db.relationship('Task', back_populates='tasklist')
+    tasks = db.relationship('Task', order_by='Task.deadline.asc()', back_populates='tasklist')
 
     def __repr__(self):
         return f'Tasklist({self.title})'
