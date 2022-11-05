@@ -1,44 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <div class="container">
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for engagement in engagements %}
         <div class="col">
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="progress mb-2" style="height: 5px">
-                        {% set complete_perc = engagement.completed_percentage() %}
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ complete_perc }}%" aria-valuenow="{{ complete_perc }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="card card-link">
+                <a style="text-decoration: none" class="text-dark" href="{{ url_for('edit_engagement', uuid=engagement.uuid) }}">
+                    <div class="card-header">
+                        <h6 class="card-subtitle text-center">{{ engagement.start.strftime('%-d %-b') }} - {{ engagement.end.strftime('%-d %-b') }}</h6>
                     </div>
-                    <a style="text-decoration: none" class="text-dark" href="{{ url_for('edit_engagement', uuid=engagement.uuid) }}">
-                        <h5 class="card-title">{{ engagement.title }}<i class="bi bi-link-45deg"></i></h5>
-                    </a>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ engagement.client }}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ engagement.start.strftime('%-d %-b') }} - {{ engagement.end.strftime('%-d %-b') }}</h6>
-                    
-                    <hr>
-
-                        {% for tasklist in engagement.tasklists %}
-                        <div id="tasklist_container" class="mb-2">
-                            <h6 class="text-decoration-underline card-subtitle mb-2">{{ tasklist.title }}</h6>
-
-                            <div id="task-container" class="ms-3">
-                                {% for task in tasklist.tasks %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" onclick="toggle_task(this)" data-uuid="{{ task.uuid }}" value="" id="task-id-{{ task.uuid }}" {% if task.complete %}checked{% endif %}>
-                                        <label class="form-check-label {% if not task.complete and task.is_overdue() %}text-danger{% endif %}" for="task-id-{{ task.uuid }}">
-                                            <span class="text-muted">{{ task.deadline.strftime('%-d %b') }}</span> - {{ task.title }}
-                                        </label>
-                                </div>
-                                {% endfor %}
-                            </div>
+                    <div class="card-body pb-0">
+                        <div class="progress mb-2" style="height: 5px">
+                        {% set complete_perc = engagement.completed_percentage() %}
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ complete_perc }}%" aria-valuenow="{{ complete_perc }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        {% endfor %}
-                    
+                        
+                        <h5 class="card-title">{{ engagement.title }}<i class="bi bi-link-45deg"></i></h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ engagement.client }}</h6>
+                        
+                        <hr>
+                    </div>
+                </a>
+                <div class="card-body pt-0">
+                    {% for tasklist in engagement.tasklists %}
+                    <div id="tasklist_container" class="mb-2">
+                        <h6 class="text-decoration-underline card-subtitle mb-2">{{ tasklist.title }}</h6>
 
+                        <div id="task-container" class="ms-3">
+                            {% for task in tasklist.tasks %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" onclick="toggle_task(this)" data-uuid="{{ task.uuid }}" value="" id="task-id-{{ task.uuid }}" {% if task.complete %}checked{% endif %}>
+                                    <label class="form-check-label {% if task.is_due_today() %} text-success {% elif not task.complete and task.is_overdue() %}text-danger{% endif %}" for="task-id-{{ task.uuid }}">
+                                        <span {% if task.complete %} class="text-decoration-line-through text-muted" {% endif %}>
+                                            <span class="text-muted">{{ task.deadline.strftime('%-d %b') }}</span> - {{ task.title }}
+                                        </span>
+                                    </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

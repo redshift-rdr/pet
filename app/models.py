@@ -121,3 +121,6 @@ class Task(db.Model):
 
     def is_overdue(self):
         return date.today() >= self.deadline
+    
+    def is_due_today(self):
+        return date.today() == self.deadline

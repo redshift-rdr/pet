@@ -30,6 +30,7 @@ def add_work_days(start_date : date, days_to_add : int):
     workingDayCount = 0    
     while workingDayCount < abs(days_to_add):
         start_date += timedelta(days=direction)
+        print(start_date)
         weekday = int(start_date.strftime('%w'))
         if (weekday != 0 and weekday != 6):
             workingDayCount += 1
@@ -194,7 +195,7 @@ def add_engagement_template():
         db.session.add(new_template)
         db.session.commit()
 
-        return redirect(url_for('add_tasklist_template', uuid=new_template.uuid))
+        return redirect(url_for('edit_template', uuid=new_template.uuid))
 
     return render_template('addengagementtemplate.html', form=form)
 
@@ -229,7 +230,7 @@ def add_task_template():
 
     form = AddTaskTemplateForm()
     if form.validate_on_submit():
-        new_task_template = TaskTemplate(title=form.title.data, days_to_complete=form.days_to_complete.data, notes=form.notes.data, template=tasklist_template)
+        new_task_template = TaskTemplate(title=form.title.data, days_to_complete=form.days_to_complete.data, offset=form.deadline_offset.data,notes=form.notes.data, template=tasklist_template)
 
         db.session.add(new_task_template)
         db.session.commit()
