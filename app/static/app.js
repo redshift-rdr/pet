@@ -46,7 +46,7 @@ function archive_engagement(btn, archive="archived")
     var eng_uuid = btn.dataset.uuid;
 
     // construct the http request
-    var url = "api/Engagement/" + eng_uuid + "/update";
+    var url = "/api/Engagement/" + eng_uuid + "/update";
     console.log(url);
     var http = new XMLHttpRequest();
     http.onreadystatechange = function()
